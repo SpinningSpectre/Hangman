@@ -89,7 +89,7 @@
                 //Sets the hp
                 currentPlayers[i] = new Player(maxHP);
 
-
+                //Sets the players name, I was planning a profanity filter but I didnt quite get to it.
                 Console.WriteLine($"What is your name \"Player{i + 1}\"");
 
                 string input = Console.ReadLine();
@@ -105,7 +105,10 @@
 
         private void MainGame()
         {
+            //Tells you the game starts
             Console.Beep(500, 300);
+
+            //This bool is called winner but it is not only called when there is a winner.
             bool winner = false;
             while (!winner)
             {
@@ -117,23 +120,32 @@
                 { 
                     if(input.Length != 1)
                     {
+                        //Checks if the guess is the full word
                         if(input == currentBoard.Word)
                         {
                             Console.WriteLine($"{currentPlayers[playersTurn].currentName} wins!!!!!");
                             winner = true;
                             continue;
                         }
+
+                        //Removes health if it isnt
                         currentPlayers[playersTurn].hp--;
+
+                        //Checks if everyone is still alive
                         bool someoneHasHp2 = false;
                         for (int i = 0; i < currentPlayers.Length; i++)
                         {
                             if (currentPlayers[i].hp > 0) { someoneHasHp2 = true; }
                         }
+
+                        //If there arent it stops the game
                         if (!someoneHasHp2)
                         {
                             winner = true;
                             continue;
                         }
+
+                        //Finds the next living player
                         bool gotPlayer = false;
                         while (!gotPlayer)
                         {
@@ -147,12 +159,15 @@
                                 gotPlayer = true;
                             }
                         }
+
+                        //Tells you the state of the game for the next round
                         currentBoard.TellState();
                         Console.WriteLine("Incorrect guess!");
                         throw new FormatException();
                     }
                     else
                     {
+                        //Makes the guess and tells you if your letter has already been guessed.
                         guess = input[0];
                         if (currentBoard.guessedLetters.Contains(guess))
                         {
@@ -164,24 +179,33 @@
                 {
                     continue;
                 }
+
+                //Checks your guess and removes your health if it was wrong
                 Console.WriteLine();
                 Console.WriteLine($"You guessed {guess}");
+
                 bool won;
                 bool loseHP = currentBoard.CheckLetter(guess, out won);
                 if (loseHP) { currentPlayers[playersTurn].hp--; }
+
+                //Tells the player their current health and checks if they died
                 Console.WriteLine(currentPlayers[playersTurn].hp);
                 if (currentPlayers[playersTurn].hp < 1) 
                 { 
                     Console.WriteLine($"{currentPlayers[playersTurn].currentName} died!");
                     Thread.Sleep(1000);
                 }
+
+                //Tells the player(s) if anyone has won
                 if (won)
                 {
                     Console.WriteLine($"{currentPlayers[playersTurn].currentName} wins!!!!!");
                     winner = true;
                 }
+
                 currentBoard.TellState();
 
+                //Checks if the players are still alive
                 bool someoneHasHp = false;
                 for(int i =0; i < currentPlayers.Length; i++)
                 {
@@ -193,6 +217,7 @@
                 }
                 else
                 {
+                    //Makes the next player the.... player
                     bool gotPlayer = false;
                     while (!gotPlayer)
                     {

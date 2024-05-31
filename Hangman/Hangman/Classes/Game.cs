@@ -2,21 +2,51 @@
 {
     internal class Game
     {
+        //Constant values
         private const int maxPlayers = 5;
-        private const int maxHP = 5;
+        private const int maxHP = 7;
+
+        //Current game
         public Player[] currentPlayers;
         public Board currentBoard;
         public int playersTurn;
+
+        //Awaiting word
+        public bool isWaiting = true;
+
+
         public void StartGame()
         {
-            SetWord();
             AskAmountOfPlayer();
+            SetWord();
             MainGame();
         }
 
         private void SetWord()
         {
-            currentBoard = new Board("abcde");
+            
+            Console.Clear();
+            Console.WriteLine("Finding Word.");
+
+            //Gets a list of words
+            DictionaryApi api = new DictionaryApi();
+            api.Try(this);
+
+            //Waits to get word
+            while (isWaiting) { }
+
+            //Chooses a random one
+            List<string> words = api.words;
+            Random rand = new Random();
+            int rnd = rand.Next(0,words.Count - 1);
+
+            //Sets it
+            currentBoard = new Board(words[rnd]);
+
+            //Text
+            Console.WriteLine("Word found!");
+            Thread.Sleep(1000);
+            Console.Clear();
         }
 
 
@@ -25,6 +55,7 @@
             int amount = 0;
             while(amount < 1)
             {
+                //Asks the amount
                 Console.WriteLine("How many players will be playing this game of hangman?");
                 string input = Console.ReadLine();
                 try
@@ -36,6 +67,8 @@
                     Console.WriteLine("That is not a number!");
                 }
                 Console.Clear();
+
+                //Too little too much
                 if(amount > maxPlayers)
                 {
                     amount = 0;
@@ -48,10 +81,15 @@
                 }
                 Console.WriteLine();
             }
+
+            //Makes the players
             currentPlayers = new Player[amount];
             for(int i = 0; i < amount; i++)
             {
+                //Sets the hp
                 currentPlayers[i] = new Player(maxHP);
+
+
                 Console.WriteLine($"What is your name \"Player{i + 1}\"");
 
                 string input = Console.ReadLine();
@@ -67,6 +105,7 @@
 
         private void MainGame()
         {
+            Console.Beep(500, 300);
             bool winner = false;
             while (!winner)
             {
@@ -108,6 +147,7 @@
                                 gotPlayer = true;
                             }
                         }
+                        currentBoard.TellState();
                         Console.WriteLine("Incorrect guess!");
                         throw new FormatException();
                     }
@@ -124,12 +164,17 @@
                 {
                     continue;
                 }
-                Console.WriteLine(currentPlayers[playersTurn].hp);
-                Console.WriteLine("Continues");
+                Console.WriteLine();
                 Console.WriteLine($"You guessed {guess}");
                 bool won;
                 bool loseHP = currentBoard.CheckLetter(guess, out won);
                 if (loseHP) { currentPlayers[playersTurn].hp--; }
+                Console.WriteLine(currentPlayers[playersTurn].hp);
+                if (currentPlayers[playersTurn].hp < 1) 
+                { 
+                    Console.WriteLine($"{currentPlayers[playersTurn].currentName} died!");
+                    Thread.Sleep(1000);
+                }
                 if (won)
                 {
                     Console.WriteLine($"{currentPlayers[playersTurn].currentName} wins!!!!!");

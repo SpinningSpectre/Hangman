@@ -37,7 +37,7 @@
             {
                 guessed += currentGuessed[i];
             }
-            Console.WriteLine($"Word: \nGuessed: {guessed}");
+            Console.WriteLine($"Guessed: {guessed}");
         }
 
         public bool CheckLetter(char letter, out bool won)

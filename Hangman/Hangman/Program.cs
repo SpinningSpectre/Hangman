@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hi mom!");
+            Game gam = new Game();
+            gam.StartGame();
         }
     }
 }

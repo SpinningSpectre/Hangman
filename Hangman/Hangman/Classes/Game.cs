@@ -16,7 +16,7 @@
 
         private void SetWord()
         {
-            currentBoard = new Board("abcdefghijklmnopqrstuvwxyz");
+            currentBoard = new Board("abcde");
         }
 
 
@@ -78,17 +78,50 @@
                 { 
                     if(input.Length != 1)
                     {
+                        if(input == currentBoard.Word)
+                        {
+                            Console.WriteLine($"{currentPlayers[playersTurn].currentName} wins!!!!!");
+                            winner = true;
+                            continue;
+                        }
+                        currentPlayers[playersTurn].hp--;
+                        bool someoneHasHp2 = false;
+                        for (int i = 0; i < currentPlayers.Length; i++)
+                        {
+                            if (currentPlayers[i].hp > 0) { someoneHasHp2 = true; }
+                        }
+                        if (!someoneHasHp2)
+                        {
+                            winner = true;
+                            continue;
+                        }
+                        bool gotPlayer = false;
+                        while (!gotPlayer)
+                        {
+                            playersTurn++;
+                            if (playersTurn > currentPlayers.Length - 1)
+                            {
+                                playersTurn = 0;
+                            }
+                            if (currentPlayers[playersTurn].hp > 0)
+                            {
+                                gotPlayer = true;
+                            }
+                        }
+                        Console.WriteLine("Incorrect guess!");
                         throw new FormatException();
                     }
                     else
                     {
                         guess = input[0];
                         if (currentBoard.guessedLetters.Contains(guess))
+                        {
+                            Console.WriteLine("This has already been guessed");
                             throw new FormatException();
+                        }
                     }
                 }catch (FormatException)
                 {
-                    Console.WriteLine("Please only write a character");
                     continue;
                 }
                 Console.WriteLine(currentPlayers[playersTurn].hp);
@@ -99,7 +132,7 @@
                 if (loseHP) { currentPlayers[playersTurn].hp--; }
                 if (won)
                 {
-                    Console.WriteLine("You win!!!!!");
+                    Console.WriteLine($"{currentPlayers[playersTurn].currentName} wins!!!!!");
                     winner = true;
                 }
                 currentBoard.TellState();

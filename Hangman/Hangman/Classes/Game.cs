@@ -214,6 +214,7 @@
                 if (!someoneHasHp)
                 {
                     winner = true;
+                    Console.WriteLine(currentBoard.Word);
                 }
                 else
                 {
